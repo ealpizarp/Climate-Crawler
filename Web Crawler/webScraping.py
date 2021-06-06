@@ -1,3 +1,28 @@
+# Costa Rica Institute of Technology
+
+# A web scrapper that fetches information about the world climate from https://en.tutiempo.net/climate
+# and store it in an local output csv file and in the Hadopp distributed file system
+
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the "Software"), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
+
+#The above copyright notice and this permission notice shall be included in all
+#copies or substantial portions of the Software.
+
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+#SOFTWARE.
+
+
+
 import requests
 from bs4 import BeautifulSoup
 import os
@@ -23,14 +48,17 @@ def getLinks(link):
     page = requests.get(baseUrl + link)
 
     if not page:
+
         print('Error obteniendo tabla')
 
     soup = BeautifulSoup(page.content, 'html.parser')
 
     # Todas las tablas utilizan esta misma clase
+
     tablas = soup.find_all("div", {"class": "mlistados"})
 
     # Aca se buscan todos los links dentro de cada tabla
+
     for tabla in tablas:
 
         referencias = tabla.find_all("a")
@@ -42,7 +70,13 @@ def getLinks(link):
     return listaLinks
 
 
+
+
+
+
 def writeToFile(basicInfo, rows):
+
+
     lock.acquire()
     #print("Escribiendo filas desde thread: ", threading.get_ident())
 
@@ -52,6 +86,10 @@ def writeToFile(basicInfo, rows):
     archivo.write(stringToWrite)
 
     lock.release()
+
+
+
+
 
 
 def getTableInfo(basicInfo, link):
@@ -92,8 +130,15 @@ def getTableInfo(basicInfo, link):
     writeToFile(basicInfo, tableRowsContent)
 
 
+
+
+
 def handle_none_val(value):
     return value if not None else 'None'
+
+
+
+
 
 
 def getProvinces(nombreContinente, linkPais):
@@ -128,6 +173,11 @@ def getProvinces(nombreContinente, linkPais):
     os.fsync(archivoErrores.fileno())
 
 
+
+
+
+
+
 def getCountries(linkContinente):
     nombreContinente = linkContinente.replace(
         "/climate/", "").replace(".html", "")
@@ -144,6 +194,12 @@ def getCountries(linkContinente):
 
     for thread in threadList:
         thread.join()
+
+
+
+
+
+
 
 
 def getContinents():
@@ -164,23 +220,8 @@ def getContinents():
         thread.join()
 
 
-def getAllData():
-    global archivo, archivoErrores
-    archivo = open("out.txt", "w")
-    archivo.write("continente" + ";" + "provincia" + ";" + "pais" + ";" + ';'.join(
-        ["Year", "T", "TM", "Tm", "PP", "V", "RA", "SN", "TS", "FG", "TN", "GR"]) + "\n")
-    archivoErrores = open("errores.txt", "w")
-
-    start = timer()
-    getContinents()
-    end = timer()
-    print("Duracion", end - start)
-
-    archivo.close()
-    archivoErrores.close()
 
 
-#getAllData()
 
 
 def pruebas():
@@ -202,28 +243,34 @@ def pruebas():
         archivoErrores.close()
 
 
+
+
+
+
 def saveFile():
     global archivo,archivoErrores
     archivo = open("climate" + ".csv", "w")
+    archivoErrores = open("ERROR_LOG" + ".txt", "w")
+    '''
     archivo.write("continente" + ";" + "provincia" + ";" + "pais" + ";" + ';'.join(
     ["Year", "T", "TM", "Tm", "PP", "V", "RA", "SN", "TS", "FG", "TN", "GR"]) + "\n")
-
-    archivoErrores = open("errors" + ".txt", "w")
-
-    start = timer()
+    '''
     getContinents()
-    end = timer()
-    print("Finished in: ", end - start)
     archivo.close()
+    archivoErrores.close()
+
+
+
+
 
 def saveToHadoop():
-    hdfs.put('/home/hdoop/TEC/BD2-Project/Bases2-WebScrapper/climate.txt', '/')
+    hdfs.put('./climate.csv', '/')
 
-
-
-#pruebas()
 
 saveFile()
+
+
+
 saveToHadoop()
 
 

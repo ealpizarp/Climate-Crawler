@@ -2,6 +2,15 @@
 
 Climate crawler is project made for the databases II (IC4302) course in the Costa Rica Institute of Technology
 
+
+## Prerequisites
+
+In order to build and run this project, you need the following software:
+
+* The prerequisites of pydoop specified in their documentation: http://crs4.github.io/pydoop/_pydoop1/installation.html#prerequisites
+* Python virtual enviroment (venv)
+* Hadoop installed with the a bashrc home specifier (hadoop bash directory contains the needed configuration)
+
 ## Web Crawler
 
 The data fetched by the web crawler is retrieved from https://en.tutiempo.net/climate/

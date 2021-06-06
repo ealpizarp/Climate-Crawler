@@ -8,7 +8,6 @@ Tecnologico de Costa Rica
 -- This job takes the information from the resulting file created by the web crawler, all data 
 fetched by the scrapper is retrieved from https://en.tutiempo.net/climate
 
-Author: Eric Alpizar
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
