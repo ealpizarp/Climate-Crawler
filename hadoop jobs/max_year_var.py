@@ -1,6 +1,6 @@
 """ 
 
-Tecnologico de Costa Rica
+Costa Rica Institute of Technology
 
 
 -- Map reduce job for getting the years in wich the country had the maximum variables

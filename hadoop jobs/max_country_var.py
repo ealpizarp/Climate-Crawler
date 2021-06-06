@@ -3,7 +3,7 @@
 Costa Rica Institute of Technology
 
 
--- Map reduce job for getting the station that has the maximum values by country
+-- Map reduce job for getting by continents the countries that have the highest variable values
 
 -- This job takes the information from the resulting file created by the web crawler, all data 
 fetched by the scrapper is retrieved from https://en.tutiempo.net/climate
@@ -43,18 +43,19 @@ def float_conversion(value):
 
 def mapper(_, text, writer):
 
-# Maps the country with a tuple that represent the station wich took
-# the measures and the maximum value of the variables 
+# Maps the continents with a tuple that represents the respective country
+# and the its max variable 
 
     row = text.split(';', 4)
     vars = row[4].split(';')
-    f_vars = [float_conversion(e) for e in vars]
-    
-    writer.emit( row[1] , (row[2], max(f_vars)) )
+    var_list = [float_conversion(e) for e in vars]
+
+    writer.emit( row[0] , (row[1],  max(var_list)) )
 
 
 def reducer(key, variables, writer):
 
-# reduces by taking station that got the maximum values
+# Reduces the mapped kv pairs by grouping the continent and the country according to the 
+# one that has the highest variable.
 
     writer.emit(key, max(variables, key = lambda i : i[1])[0] )

@@ -1,9 +1,9 @@
 """ 
 
-Tecnologico de Costa Rica
+Costa Rica Institute of Technology
 
 
--- Map reduce job for getting by continents the countries that have the highest variable values
+-- Map reduce job for getting the minimum average general values of every country
 
 -- This job takes the information from the resulting file created by the web crawler, all data 
 fetched by the scrapper is retrieved from https://en.tutiempo.net/climate
@@ -30,32 +30,29 @@ SOFTWARE.
 """
 
 
-def float_conversion(value):
-
-# Parses the floating point values recieved according to the document
-# provided by the web crawler
-
-    if value == '-':
-        return -200
-    else:
-        return float(value)
-
 
 def mapper(_, text, writer):
 
-# Maps the continents with a tuple that represents the respective country
-# and the its max variable 
+# Maps the countries with the annual average minimum temperture
 
-    row = text.split(';', 4)
-    vars = row[4].split(';')
-    var_list = [float_conversion(e) for e in vars]
+    row = text.split(';')
+    country = row[1]
 
-    writer.emit( row[0] , (row[1],  max(var_list)) )
+    if row[5] == '-':
+        temp = -200
+    else:
+        temp = float(row[4])
+
+    
+    if temp != -200:
+        writer.emit(country, temp)
 
 
-def reducer(key, variables, writer):
+def reducer(key, values, writer):
 
-# Reduces the mapped kv pairs by grouping the continent and the country according to the 
-# one that has the highest variable.
+# Reduces by taking the minimum value of the set annual minimum tempertures of each country
 
-    writer.emit(key, max(variables, key = lambda i : i[1])[0] )
+    writer.emit(key, min(values))
+
+
+

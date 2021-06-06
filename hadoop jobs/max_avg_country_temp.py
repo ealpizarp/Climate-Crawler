@@ -3,7 +3,7 @@
 Costa Rica Institute of Technology
 
 
--- Map reduce job for getting the station that has the maximum values by country
+-- Map reduce job for getting the maximum average general values of every country
 
 -- This job takes the information from the resulting file created by the web crawler, all data 
 fetched by the scrapper is retrieved from https://en.tutiempo.net/climate
@@ -30,31 +30,29 @@ SOFTWARE.
 """
 
 
-def float_conversion(value):
-
-# Parses the floating point values recieved according to the document
-# provided by the web crawler
-
-    if value == '-':
-        return -200
-    else:
-        return float(value)
-
 
 def mapper(_, text, writer):
 
-# Maps the country with a tuple that represent the station wich took
-# the measures and the maximum value of the variables 
+# Maps the countries with the annual average maximum temperture
 
-    row = text.split(';', 4)
-    vars = row[4].split(';')
-    f_vars = [float_conversion(e) for e in vars]
+    row = text.split(';')
+    country = row[1]
+
+    if row[4] == '-':
+        temp = -200
+    else:
+        temp = float(row[4])
+
     
-    writer.emit( row[1] , (row[2], max(f_vars)) )
+    if temp != -200:
+        writer.emit(country, temp)
 
 
-def reducer(key, variables, writer):
+def reducer(key, values, writer):
 
-# reduces by taking station that got the maximum values
+# Reduces by taking the maximum value of the set annual maximum tempertures of each country
 
-    writer.emit(key, max(variables, key = lambda i : i[1])[0] )
+    writer.emit(key, max(values))
+
+
+

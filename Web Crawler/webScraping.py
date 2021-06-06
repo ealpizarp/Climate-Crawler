@@ -262,8 +262,8 @@ def saveFile():
 
 
 
-
 def saveToHadoop():
+    hdfs.rm('/climate.csv', True)
     hdfs.put('./climate.csv', '/')
 
 

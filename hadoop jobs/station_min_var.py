@@ -3,7 +3,7 @@
 Costa Rica Institute of Technology
 
 
--- Map reduce job for getting the station that has the maximum values by country
+-- Map reduce job for getting the station that has the minimum values by country
 
 -- This job takes the information from the resulting file created by the web crawler, all data 
 fetched by the scrapper is retrieved from https://en.tutiempo.net/climate
@@ -44,17 +44,17 @@ def float_conversion(value):
 def mapper(_, text, writer):
 
 # Maps the country with a tuple that represent the station wich took
-# the measures and the maximum value of the variables 
+# the measures and the minimum value of the variables 
 
     row = text.split(';', 4)
     vars = row[4].split(';')
     f_vars = [float_conversion(e) for e in vars]
     
-    writer.emit( row[1] , (row[2], max(f_vars)) )
+    writer.emit( row[1] , (row[2], min(f_vars)) )
 
 
 def reducer(key, variables, writer):
 
-# reduces by taking station that got the maximum values
+# reduces by taking station that got the minimum values
 
-    writer.emit(key, max(variables, key = lambda i : i[1])[0] )
+    writer.emit(key, min(variables, key = lambda i : i[1])[0] )

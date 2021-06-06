@@ -1,6 +1,6 @@
 """ 
 
-Tecnologico de Costa Rica
+Costa Rica Institute of Technology
 
 
 -- Map reduce job for getting the average annual temperture by decades
