@@ -29,13 +29,16 @@ SOFTWARE.
 
 """
 
+from itertools import tee
+from os import minor
+
 def float_conversion(value):
 
 # Parses the floating point values recieved according to the document
 # provided by the web crawler
 
     if value == '-':
-        return -200
+        return float('inf')
     else:
         return float(value)
 
@@ -43,16 +46,24 @@ def float_conversion(value):
 def mapper(_, text, writer):
 
 # Maps the countries with a tuple that represents the year of the measure
-# and the minimum value of all the variables
+# and the value of all the variables
 
     row = text.split(';', 4)
     variables = row[4].split(';')
-    var_num = [float_conversion(e) for e in variables]
-    writer.emit((row[1]) , (int(row[3]), min(var_num)) )
+    vars_num = [float_conversion(e) for e in variables]
+    writer.emit((row[1]) , (int(row[3]), vars_num) )
 
 
 def reducer(key, variables, writer):
 
 # Reduces by taking by chosing the year of the country that has the minimum value
 
-    writer.emit(key, min(variables, key = lambda i : i[1])[0] )
+    cont = 0
+    max_vars = []
+
+    for e in tee(variables, 11):
+
+        max_vars.append(min(e, key = lambda i : i[1][cont])[0])
+        cont += 1 
+
+    writer.emit(key, ';'.join(map(str, max_vars)) )

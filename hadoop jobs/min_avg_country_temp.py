@@ -41,7 +41,7 @@ def mapper(_, text, writer):
     if row[5] == '-':
         temp = -200
     else:
-        temp = float(row[4])
+        temp = float(row[5])
 
     
     if temp != -200:

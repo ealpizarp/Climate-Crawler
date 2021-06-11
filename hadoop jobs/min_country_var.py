@@ -29,6 +29,8 @@ SOFTWARE.
 
 """
 
+from itertools import tee
+
 
 def float_conversion(value):
 
@@ -36,26 +38,33 @@ def float_conversion(value):
 # provided by the web crawler
 
     if value == '-':
-        return -200
+        return float('inf')
     else:
         return float(value)
 
 
 def mapper(_, text, writer):
 
-# Maps the continents with a tuple that represents the respective country
-# and the its minimum variable 
+# Maps the countries with the values of the variables
 
     row = text.split(';', 4)
-    vars = row[4].split(';')
-    var_list = [float_conversion(e) for e in vars]
+    continent = row[0]
+    country = row[1]
+    vars = [float_conversion(e) for e in row[4].split(';')]
 
-    writer.emit( row[0] , (row[1],  min(var_list)) )
+    writer.emit(continent, (country, vars))
 
 
-def reducer(key, variables, writer):
+def reducer(key, values, writer):
 
-# Reduces the mapped kv pairs by grouping the continent and the country according to the 
-# one that has the minimum variable.
+# Reduces by taking the minimum value of every variable in the set of variables of each country
 
-    writer.emit(key, min(variables, key = lambda i : i[1])[0] )
+    cont = 0
+    max_vars = []
+
+    for e in tee(values, 11):
+
+        max_vars.append(min(e, key = lambda i : i[1][cont])[0])
+        cont += 1 
+
+    writer.emit(key, ';'.join(map(str, max_vars)))

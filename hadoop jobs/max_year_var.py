@@ -29,13 +29,15 @@ SOFTWARE.
 
 """
 
+from itertools import tee
+
 def float_conversion(value):
 
 # Parses the floating point values recieved according to the document
 # provided by the web crawler
 
     if value == '-':
-        return -200
+        return float('-inf')
     else:
         return float(value)
 
@@ -47,12 +49,20 @@ def mapper(_, text, writer):
 
     row = text.split(';', 4)
     variables = row[4].split(';')
-    var_num = [float_conversion(e) for e in variables]
-    writer.emit((row[1]) , (int(row[3]), max(var_num)) )
+    vars_num = [float_conversion(e) for e in variables]
+    writer.emit((row[1]) , (int(row[3]), vars_num) )
 
 
 def reducer(key, variables, writer):
 
 # Reduces by taking by chosing the year of the country that has the maximum value
+    
+    cont = 0
+    max_vars = []
 
-    writer.emit(key, max(variables, key = lambda i : i[1])[0] )
+    for e in tee(variables, 11):
+
+        max_vars.append(max(e, key = lambda i : i[1][cont])[0])
+        cont += 1 
+
+    writer.emit(key, ';'.join(map(str, max_vars)) )

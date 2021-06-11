@@ -22,17 +22,19 @@
 #SOFTWARE.
 
 
-
 import requests
 from bs4 import BeautifulSoup
 import os
 from timeit import default_timer as timer
 import threading
 import pydoop.hdfs as hdfs
+
+
+
+
 lock = threading.Lock()
 
-baseUrl = 'https://en.tutiempo.net/climate'
-
+baseUrl = 'https://en.tutiempo.net'
 
 tableHeader = ["Year", "T", "TM", "Tm", "PP",
                "V", "RA", "SN", "TS", "FG", "TN", "GR"]
@@ -41,15 +43,43 @@ archivo = None
 
 archivoErrores = None
 
+linksVisitados = set()
 
-def getLinks(link):
+
+
+
+
+
+
+def getLinks(link, pos=-1):
+
+
     listaLinks = []
+    completeLink = baseUrl + link
 
-    page = requests.get(baseUrl + link)
+    if (pos != -1):
+        completeLink = completeLink + "/"+str(pos)+"/"
+
+
+    page = None
+    amountOfTries = 0
+
+
+    while not page and amountOfTries < 3:
+        amountOfTries += 1
+        try:
+            page = requests.get(completeLink)
+        except:
+            continue
+
 
     if not page:
+        print('Error obteniendo tabla ', completeLink)
+        return None
 
-        print('Error obteniendo tabla')
+    if (pos > 100):
+        print("Mas de 100 ", completeLink)
+
 
     soup = BeautifulSoup(page.content, 'html.parser')
 
@@ -64,8 +94,9 @@ def getLinks(link):
         referencias = tabla.find_all("a")
 
         for ref in referencias:
-            listaLinks += [ref['href']]
+            listaLinks += [[ref['href'], ref.string]]
             # print(continente['href'])
+
 
     return listaLinks
 
@@ -74,11 +105,9 @@ def getLinks(link):
 
 
 
+
 def writeToFile(basicInfo, rows):
-
-
     lock.acquire()
-    #print("Escribiendo filas desde thread: ", threading.get_ident())
 
     stringToWrite = ""
     for row in rows:
@@ -95,10 +124,22 @@ def writeToFile(basicInfo, rows):
 def getTableInfo(basicInfo, link):
     tableRowsContent = []
 
-    page = requests.get(baseUrl + link)
+    completeLink = baseUrl + link
+
+    page = None
+    amountOfTries = 0
+
+    while not page and amountOfTries < 3:
+        amountOfTries += 1
+        try:
+            page = requests.get(completeLink)
+        except Exception as e:
+            print(e, completeLink)
+            continue
 
     if not page:
-        print('Error obteniendo tabla del clima')
+        print('Error obteniendo tabla con datos del clima ', completeLink)
+        return None
 
     soup = BeautifulSoup(page.content, 'html.parser')
 
@@ -106,15 +147,18 @@ def getTableInfo(basicInfo, link):
 
     tableRows = table.find_all("tr")[1:]
 
+
     for row in tableRows:
         dataCells = row.find_all("td")
-        #print(row, "\n")
 
         firstColumn = True
         rowText = []
 
+
         # Una vez obtenidas todas las lineas se convierte a texto para ser impresas
+
         for cell in dataCells:
+
 
             if (firstColumn == False):
                 rowText += [cell.string]
@@ -124,10 +168,48 @@ def getTableInfo(basicInfo, link):
                 firstColumn = False
 
         tableRowsContent += [rowText]
-        # print(tableRowsContent)
 
-    # return tableRowsContent
     writeToFile(basicInfo, tableRowsContent)
+
+
+
+
+
+
+def getStations(nombreContinente, linkPais):
+
+
+    nombrePais = linkPais[1]
+
+    currentPage = 1
+
+    while True:
+        listaEstaciones = getLinks(linkPais[0], currentPage)
+
+        if not listaEstaciones:
+            break
+
+        currentPage += 1
+
+        for linkEstacion in listaEstaciones:
+            nombreEstacion = linkEstacion[1]
+
+            try:
+                getTableInfo(nombreContinente + ";" +
+                             nombrePais + ";" + nombreEstacion, linkEstacion[0])
+
+            except AttributeError as e:
+                archivoErrores.write(str(e) + "Continente: " + nombreContinente + " Pais: " + nombrePais +
+                                     " Provincia: " + nombreEstacion + " Link: " + baseUrl + linkEstacion[0] + "\n")
+
+        archivo.flush()
+        os.fsync(archivo.fileno())
+
+        archivoErrores.flush()
+        os.fsync(archivoErrores.fileno())
+
+
+
 
 
 
@@ -141,54 +223,17 @@ def handle_none_val(value):
 
 
 
-def getProvinces(nombreContinente, linkPais):
-    nombrePais = linkPais.replace("/climate/", "").replace(".html", "")
-    listaProvincias = getLinks(linkPais)
-    for linkProvincia in listaProvincias:
-        nombreProvincia = linkProvincia.replace(
-            "/climate/", "").replace(".html", "")
-        # print("Continente: " + nombreContinente + " Pais: " + nombrePais +
-        #       " Provincia: " + nombreProvincia + " Link: " + baseUrl + linkProvincia + "\n")
-
-        try:
-            getTableInfo(nombreContinente + ";" +
-                         nombrePais + ";" + nombreProvincia, linkProvincia)
-            
-        except AttributeError as e:
-            archivoErrores.write( 'ERROR FETCHING TABLE '+ "Continente: " + handle_none_val(nombreContinente)  + " Pais: " + handle_none_val(nombrePais) +
-                                 " Provincia: " + handle_none_val(nombreProvincia) + " Link: " + handle_none_val(baseUrl) + handle_none_val(linkProvincia) + "\n")
-            # print(e, "Continente: " + nombreContinente + " Pais: " + nombrePais +
-            #      " Provincia: " + nombreProvincia + " Link: " + baseUrl + linkProvincia + "\n")
-
-            # print(
-            #     "!!!!!!!!! Error no se encontró tabla dentro de provincia !!!!!!!!!")
-
-        # print("\n #################### Fin de la tabla #################### \n")
-
-
-    archivo.flush()
-    os.fsync(archivo.fileno())
-
-    archivoErrores.flush()
-    os.fsync(archivoErrores.fileno())
-
-
-
-
-
-
-
 def getCountries(linkContinente):
-    nombreContinente = linkContinente.replace(
-        "/climate/", "").replace(".html", "")
-    listaPaises = getLinks(linkContinente)
+    nombreContinente = linkContinente[1]
+    listaPaises = getLinks(linkContinente[0])
 
     # Se crea un thread por país y luego se espera a que todos terminen
     threadList = []
     for linkPais in listaPaises:
-        #getProvinces(nombreContinente, linkPais)
-        threadList += [threading.Thread(target=getProvinces,
-                                        args=(nombreContinente, linkPais, ))]
+
+        threadList += [threading.Thread(target=getStations,
+                                        args=(nombreContinente, linkPais, ),
+                                        daemon=True)]
     for thread in threadList:
         thread.start()
 
@@ -201,17 +246,17 @@ def getCountries(linkContinente):
 
 
 
-
 def getContinents():
-    listaContinentes = getLinks('')
-    # print(listaContinentes)
-    # print("\n")
+    listaContinentes = getLinks("/climate/")
+    listaContinentes.pop()
+
 
     threadList = []
     for linkContinente in listaContinentes:
-        # getCountries(linkContinente)
+
         threadList += [threading.Thread(target=getCountries,
-                                        args=(linkContinente,))]
+                                        args=(linkContinente,),
+                                        daemon=True)]
 
     for thread in threadList:
         thread.start()
@@ -247,29 +292,32 @@ def pruebas():
 
 
 
+
 def saveFile():
     global archivo,archivoErrores
     archivo = open("climate" + ".csv", "w")
     archivoErrores = open("ERROR_LOG" + ".txt", "w")
-    '''
-    archivo.write("continente" + ";" + "provincia" + ";" + "pais" + ";" + ';'.join(
-    ["Year", "T", "TM", "Tm", "PP", "V", "RA", "SN", "TS", "FG", "TN", "GR"]) + "\n")
-    '''
     getContinents()
     archivo.close()
+    archivoErrores.close()
     archivoErrores.close()
 
 
 
 
+
 def saveToHadoop():
-    hdfs.rm('/climate.csv', True)
+    if hdfs.path.exists('/climate.csv'):
+        hdfs.rm('/climate.csv', True)
+
     hdfs.put('./climate.csv', '/')
 
 
+# Se invoca funcion que se encarga de ejecutar todos los procesos recursivamente 
+
 saveFile()
 
-
+# Se guarda el archivo resultante en el HDFS de Hadoop
 
 saveToHadoop()
 

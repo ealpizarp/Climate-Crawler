@@ -29,6 +29,7 @@ SOFTWARE.
 
 """
 
+from itertools import tee
 
 def float_conversion(value):
 
@@ -36,7 +37,7 @@ def float_conversion(value):
 # provided by the web crawler
 
     if value == '-':
-        return -200
+        return float('inf')
     else:
         return float(value)
 
@@ -44,17 +45,25 @@ def float_conversion(value):
 def mapper(_, text, writer):
 
 # Maps the country with a tuple that represent the station wich took
-# the measures and the minimum value of the variables 
+# the measures and the value of the variables 
 
     row = text.split(';', 4)
     vars = row[4].split(';')
     f_vars = [float_conversion(e) for e in vars]
     
-    writer.emit( row[1] , (row[2], min(f_vars)) )
+    writer.emit( row[1] , (row[2], f_vars) )
 
 
 def reducer(key, variables, writer):
 
 # reduces by taking station that got the minimum values
 
-    writer.emit(key, min(variables, key = lambda i : i[1])[0] )
+    cont = 0
+    max_vars = []
+
+    for e in tee(variables, 11):
+
+        max_vars.append(min(e, key = lambda i : i[1][cont])[0])
+        cont += 1 
+
+    writer.emit(key, ';'.join(map(str, max_vars)) )
