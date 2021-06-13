@@ -95,7 +95,7 @@ def getLinks(link, pos=-1):
 
         for ref in referencias:
             listaLinks += [[ref['href'], ref.string]]
-            # print(continente['href'])
+
 
 
     return listaLinks
@@ -107,6 +107,7 @@ def getLinks(link, pos=-1):
 
 
 def writeToFile(basicInfo, rows):
+
     lock.acquire()
 
     stringToWrite = ""
@@ -208,15 +209,6 @@ def getStations(nombreContinente, linkPais):
         archivoErrores.flush()
         os.fsync(archivoErrores.fileno())
 
-
-
-
-
-
-
-
-def handle_none_val(value):
-    return value if not None else 'None'
 
 
 

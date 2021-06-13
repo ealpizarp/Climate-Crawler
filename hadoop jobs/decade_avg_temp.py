@@ -53,12 +53,12 @@ def generate_time_intervals (row_year):
 
     global current_year
 
-    tmp_year = row_year + 10
+    tmp_year = row_year + 9
 
     while tmp_year <= current_year:
     
         year_intervals.append((row_year, tmp_year))
-        row_year = tmp_year
+        row_year = tmp_year + 1
         tmp_year += 10
 
 
@@ -97,7 +97,7 @@ def mapper(_, text, writer):
     if validate_year(row_year):
 
         cti = time_interval(row_year)
-        value = row_continent + ' ' + '[' + str(cti[0]) + ',' + str(cti[1]) + ']'
+        value = row_continent + ';' + str(cti[0])
         annual_temp = float_conversion(row[4])
         if annual_temp != -200:
             writer.emit( value , float_conversion(row[4]))
