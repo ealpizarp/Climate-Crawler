@@ -50,7 +50,7 @@ hadoop fs -rm -r /DECADE_CONTINENT_TEMPERTURE
 
 #Runs the map reduce job and stores the output in the HDFS
 
-pydoop script --job-name decade_avg_temp ./hadoop\ jobs/decade_avg_temp.py /climate.csv /DECADE_CONTINENT_TEMPERTURE
+pydoop script --job-name decade_avg_temp ./hadoop\ jobs/decade_avg_temp.py /climate.csv /DECADE_CONTINENT_TEMPERTURE -t ';'
 
 
 # Removes the existing directory in HDFS if the job was executed earlier
