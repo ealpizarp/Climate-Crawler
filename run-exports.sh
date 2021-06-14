@@ -1,18 +1,22 @@
-# Job decade_avg_temp
-sqoop export --connect jdbc:mysql://localhost:3306/weatherdata --username root --password root --table decade_avg_temp --export-dir /DECADE_AVG_TEMP --fields-terminated-by "	" --columns "decade,temperature";
-# Job max_avg_country_temp
-sqoop export --connect jdbc:mysql://localhost:3306/weatherdata --username root --password root --table max_avg_country_temp --export-dir /MAX_AVG_COUNTRY_TEMP --fields-terminated-by "	" --columns "country,temperature";
-# Job max_var_country
-sqoop export --connect jdbc:mysql://localhost:3306/weatherdata --username root --password root --table max_var_country --export-dir /MAX_VAR_COUNTRY --fields-terminated-by "	" --columns "continent,country";
-# Job min_country_var
-sqoop export --connect jdbc:mysql://localhost:3306/weatherdata --username root --password root --table min_country_var --export-dir /MIN_COUNTRY_VAR --fields-terminated-by "	" --columns "continent,country";
-# Job min_avg_country_temp
-sqoop export --connect jdbc:mysql://localhost:3306/weatherdata --username root --password root --table min_avg_country_temp --export-dir /MIN_AVG_COUNTRY_TEMP --fields-terminated-by "	" --columns "country,temperature";
-# Job max_year_var
-sqoop export --connect jdbc:mysql://localhost:3306/weatherdata --username root --password root --table max_year_var --export-dir /MAX_YEAR_VAR --fields-terminated-by "	" --columns "year,T,TM,Tm,PP,V,RA,SN,TS,FG,TN,GR";
-# Job min_year_var
-sqoop export --connect jdbc:mysql://localhost:3306/weatherdata --username root --password root --table min_year_var --export-dir /MIN_YEAR_VAR --fields-terminated-by "	" --columns "year,T,TM,Tm,PP,V,RA,SN,TS,FG,TN,GR";
-# Job station_max_var
-sqoop export --connect jdbc:mysql://localhost:3306/weatherdata --username root --password root --table station_max_var --export-dir /STATION_MAX_VAR --fields-terminated-by "	" --columns "station,T,TM,Tm,PP,V,RA,SN,TS,FG,TN,GR";
-# Job station_min_var
-sqoop export --connect jdbc:mysql://localhost:3306/weatherdata --username root --password root --table station_min_var --export-dir /STATION_MIN_VAR --fields-terminated-by "	" --columns "station,T,TM,Tm,PP,V,RA,SN,TS,FG,TN,GR";
+#Job DECADE_AVG_TEMPERATURE
+sqoop export --connect jdbc:mysql://34.66.197.163:3306/DB2_PR2 --username admin --password adminpass --table DECADE_AVG_TEMPERATURE --columns "continente, decada, temperatura" --export-dir /DECADE_AVG_TEMPERATURE --fields-terminated-by '\0073';
+
+#Job MAX_AVG_COUNTRY_TEMPS
+sqoop export --connect jdbc:mysql://34.66.197.163:3306/DB2_PR2 --username admin --password adminpass --table MAX_AVG_COUNTRY_TEMP --columns "country, temperature" --export-dir /MAX_AVG_COUNTRY_TEMPS  --fields-terminated-by '\0073';
+#Job MIN_AVG_COUNTRY_TEMPS
+sqoop export --connect jdbc:mysql://34.66.197.163:3306/DB2_PR2 --username admin --password adminpass --table MIN_AVG_COUNTRY_TEMP --columns "country, temperature" --export-dir /MIN_AVG_COUNTRY_TEMPS  --fields-terminated-by '\0073';
+
+#Job MAX_COUNTRY_VAR
+sqoop export --connect jdbc:mysql://34.66.197.163:3306/DB2_PR2 --username admin --password adminpass --table MAX_COUNTRY_VAR --columns "continent, T, TMax, Tmin, PP, V, RA, SN, TS, FG, TN, GR" --export-dir /MAX_COUNTRY_VAR  --fields-terminated-by '\0073';
+#Job MIN_COUNTRY_VAR
+sqoop export --connect jdbc:mysql://34.66.197.163:3306/DB2_PR2 --username admin --password adminpass --table MIN_COUNTRY_VAR --columns "continent, T, TMax, Tmin, PP, V, RA, SN, TS, FG, TN, GR" --export-dir /MIN_COUNTRY_VAR  --fields-terminated-by '\0073';
+
+#Job MAX_YEAR_VAR
+sqoop export --connect jdbc:mysql://34.66.197.163:3306/DB2_PR2 --username admin --password adminpass --table MAX_YEAR_VAR --columns "country, T, TMax, Tmin, PP, V, RA, SN, TS, FG, TN, GR" --export-dir /MAX_YEAR_VAR  --fields-terminated-by '\0073';
+#Job MIN_YEAR_VAR
+sqoop export --connect jdbc:mysql://34.66.197.163:3306/DB2_PR2 --username admin --password adminpass --table MIN_YEAR_VAR --columns "country, T, TMax, Tmin, PP, V, RA, SN, TS, FG, TN, GR" --export-dir /MIN_YEAR_VAR  --fields-terminated-by '\0073';
+
+#Job STATION_MAX_VAR
+sqoop export --connect jdbc:mysql://34.66.197.163:3306/DB2_PR2 --username admin --password adminpass --table STATION_MAX_VAR --columns "country, T, TMax, Tmin, PP, V, RA, SN, TS, FG, TN, GR" --export-dir /STATION_MAX_VAR  --fields-terminated-by '\0073';
+#Job STATION_MIN_VAR
+sqoop export --connect jdbc:mysql://34.66.197.163:3306/DB2_PR2 --username admin --password adminpass --table STATION_MIN_VAR --columns "country, T, TMax, Tmin, PP, V, RA, SN, TS, FG, TN, GR" --export-dir /STATION_MIN_VAR  --fields-terminated-by '\0073';
