@@ -10,6 +10,7 @@ In order to build and run this project, you need the following software:
 * The prerequisites of pydoop specified in their documentation: http://crs4.github.io/pydoop/_pydoop1/installation.html#prerequisites
 * Python virtual enviroment (venv)
 * Hadoop installed with the a bashrc home specifier (hadoop bash directory contains the needed configuration)
+* Sqoop 1.4.7 and mysql-connector-java
 
 ## Web Crawler
 
@@ -18,7 +19,7 @@ The data fetched by the web crawler is retrieved from https://en.tutiempo.net/cl
 ## Hadoop
 
 Hadoop is used for processing and storing data of the web crawler output in the HDFS, map reduce jobs 
-are made in a high level python api for hadoop called pydoop. The map reduce jobs are:
+are made in a high level python api for hadoop called pydoop. The map reduce jobs for every variable are:
 
 1. The 10 countries with the highest overall averages
 2. The 10 countries with the lowest overall averages
