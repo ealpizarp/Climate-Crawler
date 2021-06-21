@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.ttt {
+    border: 1px solid black;
+    height: 435px;
+    width: 600px;
+    position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .max_prom {
+    height: 300px;
+    width: 500;
+    position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .ano_var {
+    height: 850px;
+    width: 600px;
+    position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+
+     
+  #listaPaises-div {
+    margin-left: 1%;
+    margin-right: 1%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    max-width: 100%;
+    position: center;
+}
+
+.jc{
+  margin-left: 1%;
+  margin-right: 1%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  max-width: 100%;
+  position: center;
+
+}
+
+.botonBusqueda{
+
+  float: right;
+}
