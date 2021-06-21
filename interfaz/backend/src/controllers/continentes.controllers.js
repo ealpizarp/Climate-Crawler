@@ -38,6 +38,44 @@ contientesCtrl.getContinentes_deca_temp = (req ,res) => {
 }
 
 
+
+contientesCtrl.getContinentes_deca_temp_busqueda = (req ,res) => {
+
+    try {
+        
+        const query = 'select * from DECADE_AVG_TEMPERATURE where DECADE_AVG_TEMPERATURE.continente ='+"'"+ req.params.nombre_cont+"'"+'  order by DECADE_AVG_TEMPERATURE.decada asc ';
+
+        conn.query(query, function (error, results, fields) {
+            
+            if (error) throw error;
+            let results_array = [];
+            results.forEach(result => {
+                results_array.push({
+
+                    id: result.ID,
+                    continente: result.continente,
+                    decada: result.decada,
+                    temperatura: result.temperatura
+
+                });
+
+            })
+            return res.send(JSON.stringify(results_array));
+
+        });
+
+
+
+    } catch (error) {
+        
+    }
+
+
+}
+
+
+
+
 contientesCtrl.getCont_pais_var_max = (req ,res) => {
     
     try {
