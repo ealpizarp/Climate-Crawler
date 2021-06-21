@@ -4,6 +4,7 @@ import axios from 'axios';
 import Decada from '../components/Decada_conti';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Button,Form,FormControl} from 'react-bootstrap'
+import { axiosInstance } from '../axiosConfig';
 
 export default class Decada_prom_cont extends React.Component {
     constructor(props) {
@@ -19,14 +20,14 @@ export default class Decada_prom_cont extends React.Component {
 
     async getcontinentes() {
         
-      const res = await axios.get('http://localhost:5000/get_continentes_deca_temp');
+      const res = await axiosInstance.get('/get_continentes_deca_temp');
       this.setState({contientes: res.data})
         
     }
 
     async busquedaCont(event){
         event.preventDefault();
-        const res = await axios.get('http://localhost:5000/get_continentes_deca_temp_busqueda/'+this.state.busquedaXT);
+        const res = await axiosInstance.get('/get_continentes_deca_temp_busqueda/'+this.state.busquedaXT);
         this.setState({contientes: res.data})
 
 

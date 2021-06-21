@@ -4,6 +4,7 @@ import axios from 'axios';
 import Ano_var_pais from '../components/Pais_var_max_min';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Button,Form,FormControl} from 'react-bootstrap'
+import { axiosInstance } from '../axiosConfig';
 
 export default class Max_min_año_var extends React.Component {
     constructor(props) {
@@ -22,21 +23,20 @@ export default class Max_min_año_var extends React.Component {
 
     async getMax() {
         
-      const res = await axios.get('http://localhost:5000/get_ano_var_max');
+      const res = await axiosInstance.get('/get_ano_var_max');
       this.setState({paises_max_ano: res.data})
         
     }
 
     async getMin(){
-        const res = await axios.get('http://localhost:5000/get_ano_var_min');
+        const res = await axiosInstance.get('/get_ano_var_min');
         this.setState({paises_max_ano: res.data})
     }
 
     async busqueda_pais_ano(event){
         event.preventDefault();
-        const res = await axios.get('http://localhost:5000/get_max_min_var_busq/'+this.state.busquedaXT);
+        const res = await axiosInstance.get('/get_max_min_var_busq/'+this.state.busquedaXT);
         this.setState({paises_max_ano: res.data})
-
 
     }
 

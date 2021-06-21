@@ -4,6 +4,7 @@ import axios from 'axios';
 import Ano_var_pais from '../components/Pais_var_max_min';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Button,Form,FormControl} from 'react-bootstrap'
+import { axiosInstance } from '../axiosConfig';
 
 export default class Estacion extends React.Component {
     constructor(props) {
@@ -22,19 +23,19 @@ export default class Estacion extends React.Component {
 
     async getMax() {
         
-      const res = await axios.get('http://localhost:5000/get_estacion_max');
+      const res = await axiosInstance.get('/get_estacion_max');
       this.setState({estaciones: res.data})
         
     }
 
     async getMin(){
-        const res = await axios.get('http://localhost:5000/get_estacion_min');
+        const res = await axiosInstance.get('/get_estacion_min');
         this.setState({estaciones: res.data})
     }
 
     async busquedaEstacion(event){
         event.preventDefault();
-        const res = await axios.get('http://localhost:5000/get_estacion_busq/'+this.state.busquedaXT);
+        const res = await axiosInstance.get('/get_estacion_busq/'+this.state.busquedaXT);
         this.setState({estaciones: res.data})
 
 

@@ -4,6 +4,7 @@ import axios from 'axios';
 import Ano_var_pais from '../components/Pais_var_max_min';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Button,Form,FormControl} from 'react-bootstrap'
+import { axiosInstance } from '../axiosConfig';
 
 export default class Contiente_pais_var extends React.Component {
     constructor(props) {
@@ -19,13 +20,13 @@ export default class Contiente_pais_var extends React.Component {
 
     async getMax() {
         
-      const res = await axios.get('http://localhost:5000/get_continente_pais_var_max');
+      const res = await axiosInstance.get('/get_continente_pais_var_max');
       this.setState({cont_pais_var: res.data})
         
     }
 
     async getMin(){
-        const res = await axios.get('http://localhost:5000/get_continente_pais_var_min');
+        const res = await axiosInstance.get('/get_continente_pais_var_min');
         this.setState({cont_pais_var: res.data})
     }
 

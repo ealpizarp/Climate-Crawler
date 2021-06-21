@@ -4,6 +4,7 @@ import axios from 'axios';
 import Max_pro from '../components/Max_prom_gene';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Button} from 'react-bootstrap'
+import { axiosInstance } from '../axiosConfig';
 
 export default class Max_prome extends React.Component {
     constructor(props) {
@@ -18,13 +19,13 @@ export default class Max_prome extends React.Component {
 
     async getMax_prome() {
         
-      const res = await axios.get('http://localhost:5000/get_paises_promedio_general_max');
+      const res = await axiosInstance.get('/get_paises_promedio_general_max');
       this.setState({paises_max_pro: res.data})
         
     }
 
     async getMin_prome(){
-        const res = await axios.get('http://localhost:5000/get_paises_promedio_general_mini');
+        const res = await axiosInstance.get('/get_paises_promedio_general_mini');
         this.setState({paises_max_pro: res.data})
     }
 

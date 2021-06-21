@@ -4,6 +4,7 @@ import axios from 'axios';
 import PaisesU from '../components/Pais';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Form,FormControl,Button} from 'react-bootstrap'
+import { axiosInstance } from '../axiosConfig';
 
 export default class Paises extends React.Component {
     constructor(props) {
@@ -16,7 +17,7 @@ export default class Paises extends React.Component {
 
     async getPaises() {
         
-      const res = await axios.get('http://localhost:5000/get_paises');
+      const res = await axiosInstance.get('/get_paises');
       this.setState({paises: res.data})
         
     }
